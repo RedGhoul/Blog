@@ -44,7 +44,7 @@ namespace Snips
 
             services.AddCors();
             services.AddControllersWithViews();
-            services.AddRazorPages();
+            services.AddRazorPages().AddRazorRuntimeCompilation();
 
             services.AddResponseCompression();
             services.AddTransient<UserManager<ApplicationUser>>();

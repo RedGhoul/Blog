@@ -1,11 +1,18 @@
-﻿@{
+﻿@model List<Snips.Models.NoteDTO>
+@{
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome To Code Snipits</h1>
-    <p>An easy to use tool to store your ideas, and code snips</p>
-</div>
-<div class="text-center">
-    <a class="btn btn-danger" asp-area="Identity" asp-page="/Account/Register">Get Started Now</a>
+<div class="row">
+    @foreach (var note in Model)
+    {
+        <div class="card" style="width: 18rem;">
+            <img src="..." class="card-img-top" alt="...">
+            <div class="card-body">
+                <h5 class="card-title">@note.Name</h5>
+                <p class="card-text">@note.Content.Substring(0,20)</p>
+                <a href="#" class="btn btn-primary">View</a>
+            </div>
+        </div>
+    }
 </div>

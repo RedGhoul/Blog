@@ -34,13 +34,13 @@ namespace Snips.Controllers
                 .Where(x => x.Deleted == false && x.ApplicationUserId.Equals(GetCurrentUserId()))
                 .OrderByDescending(x => x.LastModified)
                 .Select(x => new
-            NoteDTO
-                {
-                    Id = x.Id,
-                    Name = x.Name,
-                    Created = x.Created,
-                    LastModified = x.LastModified.GetValueOrDefault(DateTime.UtcNow)
-                }).ToListAsync();
+                    NoteDTO
+                        {
+                            Id = x.Id,
+                            Name = x.Name,
+                            Created = x.Created,
+                            LastModified = x.LastModified.GetValueOrDefault(DateTime.UtcNow)
+                        }).ToListAsync();
             return View(await snipsQueryItems);
         }
 

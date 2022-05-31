@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Snips.Data;
 using Snips.Models;
 
 namespace Snips.Controllers
@@ -12,15 +15,33 @@ namespace Snips.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-
-        public HomeController(ILogger<HomeController> logger)
+        private readonly ApplicationDbContext _context;
+        private UserManager<ApplicationUser> _userManager;
+        
+        public HomeController(UserManager<ApplicationUser> userManager, ILogger<HomeController> logger, ApplicationDbContext context)
         {
             _logger = logger;
+            _context = context;
+            _userManager = userManager;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var snipsQueryItems = await _context.Notes
+                .Where(x => x.Deleted == false 
+                            && x.Draft == false 
+                            && x.ApplicationUserId.Equals(GetCurrentUserId()))
+                .OrderByDescending(x => x.LastModified)
+                .Select(x => new
+                    NoteDTO
+                    {
+                        Id = x.Id,
+                        Name = x.Name,
+                        Content = x.Content,
+                        Created = x.Created,
+                        LastModified = x.LastModified.GetValueOrDefault(DateTime.UtcNow)
+                    }).ToListAsync();
+            return View(snipsQueryItems);
         }
 
         public IActionResult Privacy()
@@ -32,6 +53,20 @@ namespace Snips.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+        
+        private bool NoteExists(int id)
+        {
+            return _context.Notes.Any(e => e.Id == id);
+        }
+
+        private string GetCurrentUserId()
+        {
+            if (User != null)
+            {
+                return _userManager.GetUserId(User);
+            }
+            else { return null; }
         }
     }
 }

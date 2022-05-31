@@ -21,7 +21,6 @@
         <form asp-action="Create"  method="post">
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
-                <a id="AddCode" class="btn btn-primary">Add Code Snip</a>
                 <a id="AddNote" class="btn btn-primary">Add Note Snip</a>
             </div>
             <div class="form-group">
@@ -38,3 +37,58 @@
         </form>
 </div>
 </div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.7/ace.js"
+            integrity="sha256-C7DTYRJLG+B/VEzHGeoPMw699nsTQYPAXHKXZb+q04E="
+            crossorigin="anonymous"></script>    
+    <script src="https://cdn.quilljs.com/1.3.4/quill.js"></script>
+    <script>
+        window.addEventListener('load', (event) => {
+            var noteContent = $("#note-content")
+            codeContent.hide();
+            noteContent.hide();
+
+
+            $("#AddNote").click(function () {
+                if (noteContent.is(":hidden")) {
+                    noteContent.show();
+                } else {
+                    noteContent.hide();
+                }
+            });
+
+            var toolbarOptions = [
+                ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
+                ['blockquote', 'code-block'],
+
+                [{ 'header': 1 }, { 'header': 2 }],               // custom button values
+                [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                [{ 'script': 'sub' }, { 'script': 'super' }],      // superscript/subscript
+                [{ 'indent': '-1' }, { 'indent': '+1' }],          // outdent/indent
+                [{ 'direction': 'rtl' }],                         // text direction
+
+                [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
+                [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+
+                [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
+                [{ 'font': [] }],
+                [{ 'align': [] }],
+
+                ['clean']                                         // remove formatting button
+            ];
+            var quillDocs = new Quill('#editorContent', {
+                theme: 'snow',
+                modules: {
+                    toolbar: toolbarOptions
+                },
+            });
+            quillDocs.on('text-change', function (delta) {
+                $("#Note_Content").val(quillDocs.root.innerHTML);
+                console.log($("#Note_Content").val());
+            });
+
+           
+        });
+    </script>
+}
