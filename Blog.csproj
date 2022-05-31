@@ -1,0 +1,57 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <UserSecretsId>aspnet-Snips-EF95DB80-9C41-4664-8BCF-DFC8DB79938A</UserSecretsId>
+    <CopyRefAssembliesToPublishDirectory>false</CopyRefAssembliesToPublishDirectory>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerfileContext>.</DockerfileContext>
+    <AssemblyName>Blog</AssemblyName>
+    <RootNamespace>Blog</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Migrations\20200818185633_setupTsVectors.cs" />
+    <Compile Remove="Migrations\20200818185633_setupTsVectors.Designer.cs" />
+    <Compile Remove="Migrations\20200818190457_setupTsVectors.cs" />
+    <Compile Remove="Migrations\20200818190457_setupTsVectors.Designer.cs" />
+    <Compile Remove="Migrations\20200818190558_setupTsVectors.cs" />
+    <Compile Remove="Migrations\20200818190558_setupTsVectors.Designer.cs" />
+    <Compile Remove="Migrations\20200819013407_modifynotetrigger.cs" />
+    <Compile Remove="Migrations\20200819013407_modifynotetrigger.Designer.cs" />
+    <Compile Remove="Migrations\20200918214926_tookoutCheckins.cs" />
+    <Compile Remove="Migrations\20200918214926_tookoutCheckins.Designer.cs" />
+    <Compile Remove="Migrations\20200918215246_tookoutCheckins.cs" />
+    <Compile Remove="Migrations\20200918215246_tookoutCheckins.Designer.cs" />
+    <Compile Remove="Migrations\20200918215406_tookoutCheckins.cs" />
+    <Compile Remove="Migrations\20200918215406_tookoutCheckins.Designer.cs" />
+    <Compile Remove="Migrations\20200918215526_tookoutCheckins.cs" />
+    <Compile Remove="Migrations\20200918215526_tookoutCheckins.Designer.cs" />
+    <Compile Remove="Migrations\20200919022330_AddedCodeLanguageToNoteRel.cs" />
+    <Compile Remove="Migrations\20200919022330_AddedCodeLanguageToNoteRel.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.5" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="6.0.5" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.5" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.5" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.5">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Serilog" Version="2.11.0" />
+    <PackageReference Include="Serilog.AspNetCore" Version="5.0.0" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="4.0.1" />
+    <PackageReference Include="Serilog.Sinks.Elasticsearch" Version="8.4.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Views\CodeLanguages\Create.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\CodeLanguages\Delete.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\CodeLanguages\Details.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\CodeLanguages\Edit.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\CodeLanguages\Index.cshtml" />
+  </ItemGroup>
+
+</Project>

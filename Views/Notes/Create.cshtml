@@ -1,0 +1,40 @@
+﻿@model NoteCreateViewModel
+
+<style>
+    .control-label {
+        font-size: xx-large;
+    }
+    #codeEditor {
+        height: 500px;
+        width: 100%;
+    }
+</style>
+
+<h4>Note - Create</h4>
+<hr />
+<div>
+    <a asp-action="Index" class="btn btn-primary">Back to List</a>
+</div>
+<hr />
+<div class="row">
+    <div class="col-md-12">
+        <form asp-action="Create"  method="post">
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+                <a id="AddCode" class="btn btn-primary">Add Code Snip</a>
+                <a id="AddNote" class="btn btn-primary">Add Note Snip</a>
+            </div>
+            <div class="form-group">
+                <label asp-for="@Model.Note.Name" class="control-label"></label>
+                <input asp-for="@Model.Note.Name" class="form-control" />
+            </div>
+            <div class="form-group" id="note-content">
+                <label asp-for="@Model.Note.Content" class="control-label"></label>
+                <input asp-for="@Model.Note.Content" class="form-control" hidden />
+                <div id="editorContent" style="height: 300px;">
+                </div>
+            </div>
+
+        </form>
+</div>
+</div>
