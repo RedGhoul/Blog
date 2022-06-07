@@ -7,17 +7,12 @@
     .control-label {
         font-size: xx-large;
     }
-
-    #codeEditor {
-        height: 500px;
-        width: 100%;
-    }
 </style>
-<h4>Note - Edit</h4>
-<hr />
+<h4>Blog - Edit</h4>
+<hr/>
 <div>
     <a class="btn btn-primary" asp-action="Index">Back to List</a>
-    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal">
+    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
         Delete
     </button>
     <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
@@ -39,41 +34,35 @@
         </div>
     </div>
 </div>
-<hr />
+<hr/>
 <div class="row">
     <div class="col-md-12">
         <form>
-            <input type="hidden" asp-for="@Model.Note.Id" />
-            <div class="form-group">
-                @if (string.IsNullOrWhiteSpace(@Model.Note.Content))
-                {
-                    <a id="ViewNote" class="btn btn-primary">Add Note Snip</a>
-                }
-
-
+            <input type="hidden" asp-for="@Model.Note.Id"/>
+            <div class="form-group mt-3">
+                <label asp-for="@Model.Note.Name" class="control-label mt-3"></label>
+                <input asp-for="@Model.Note.Name" class="form-control"/>
             </div>
-            <div class="form-group">
-                <label asp-for="@Model.Note.Name" class="control-label"></label>
-                <input asp-for="@Model.Note.Name" class="form-control" />
+            <div class="form-check mt-3 float-end">
+                <input class="form-check-input" type="checkbox" asp-for="@Model.Note.Draft">
+                <label class="form-check-label" asp-for="@Model.Note.Draft">
+                    Draft
+                </label>
             </div>
-            <div class="form-group" id="note-content">
-                <label asp-for="@Model.Note.Content" class="control-label"></label>
-                <input asp-for="@Model.Note.Content" class="form-control" hidden />
+            <div class="form-group mt-3" id="note-content">
+                <label asp-for="@Model.Note.Content" class="control-label mt-3"></label>
+                <input asp-for="@Model.Note.Content" class="form-control" hidden/>
                 <div id="editorContent" style="height: 300px;">
                     @Html.Raw(@Model.Note.Content)
                 </div>
             </div>
-           
+
         </form>
     </div>
 </div>
 
 
-
 @section Scripts {
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.7/ace.js"
-            integrity="sha256-C7DTYRJLG+B/VEzHGeoPMw699nsTQYPAXHKXZb+q04E="
-            crossorigin="anonymous"></script>
     <script>
       
         window.addEventListener('load', (event) => {
@@ -81,18 +70,37 @@
             var curNoteId = $("#Note_Id").val();
             var noteContent = $("#note-content")
 
-            @if (string.IsNullOrWhiteSpace(@Model.Note.Content)) {
+            @if (string.IsNullOrWhiteSpace(@Model.Note.Content))
+            {
                 @Html.Raw("noteContent.hide();")
             }
 
-          
-           
-
+            
             $("#ViewNote").click(function () {
                 noteContent.show();
                 $("#ViewNote").hide();
             });
 
+            $("#Note_Draft").click(function () {
+                if (curTimeOutNoteName !== null) {
+                    clearTimeout(curTimeOutNoteName);
+                }
+                curTimeOutNoteName = setTimeout(function () {
+                    $.ajax({
+                        url: "/api/Notes/NoteDraft/" + curNoteId,
+                        dataType: 'text',
+                        type: 'post',
+                        contentType: 'application/json',
+                        data: JSON.stringify({ "noteDraft": document.getElementById('Note_Draft').checked }),
+                        success: function (data, textStatus, jQxhr) {
+                        },
+                        error: function (jqXhr, textStatus, errorThrown) {
+                            alertify.message("Could not save change", 1000);
+                        }
+                    });
+                }, 500);
+            });
+            
             var curTimeOutNoteName = null;
             $("#Note_Name").keyup(function () {
                 if (curTimeOutNoteName !== null) {

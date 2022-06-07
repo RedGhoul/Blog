@@ -23,9 +23,9 @@ namespace Snips.Controllers.API
         {
         }
 
-        // POST: api/Notes/NoteTitle
+        // POST: api/Notes/NoteName
         [HttpPost("NoteName/{id}")]
-        public async Task<ActionResult> UpdateCodeName(int id, [FromBody] UpdateNoteName value)
+        public async Task<ActionResult> UpdateNoteName(int id, [FromBody] UpdateNoteName value)
         {
             var curUser = await GetCurrentUser();
             var note = await _context.Notes.Where(
@@ -38,6 +38,26 @@ namespace Snips.Controllers.API
             }
 
             note.Name = value.noteName;
+            _context.Entry(note).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+            return Ok("Saved");
+        }
+        
+        // POST: api/Notes/NoteDraft
+        [HttpPost("NoteDraft/{id}")]
+        public async Task<ActionResult> UpdateDraftState(int id, [FromBody] UpdateDraftState value)
+        {
+            var curUser = await GetCurrentUser();
+            var note = await _context.Notes.Where(
+                x => x.Id == id &&
+                     x.ApplicationUserId.Equals(curUser.Id)).FirstOrDefaultAsync();
+
+            if (note == null)
+            {
+                return NotFound();
+            }
+
+            note.Draft = value.noteDraft;
             _context.Entry(note).State = EntityState.Modified;
             await _context.SaveChangesAsync();
             return Ok("Saved");

@@ -7,7 +7,7 @@
 </div>
 <div class="row">
     <div class="col-4">
-        <h1>Notes - Index</h1>
+        <h1>Blog - Index</h1>
     </div>
     <div class="col-7">
 
@@ -23,22 +23,22 @@
     <div class="col-2">
 
     </div>
-    <div class="col-8">
+    <div class="col-8 mt-3">
         <form asp-action="Search">
 
             <div class="form-group">
-                <label name="SearchTerm" class="control-label">Search Terms - Server</label>
+                <label name="SearchTerm" class="control-label mt-2">Search Terms - Server</label>
                 <input name="SearchTerm" class="form-control" />
             </div>
             <div class="form-group">
-                <label class="control-label">Created Date</label>
+                <label class="control-label mt-2">Created Date</label>
                 <input name="CreatedDate" type="date" class="form-control" />
             </div>
             <div class="form-group">
-                <label class="control-label">Last Modified Date</label>
+                <label class="control-label mt-2">Last Modified Date</label>
                 <input name="LastModifiedDate" type="date" class="form-control" />
             </div>
-            <div class="form-group">
+            <div class="form-group mt-3 float-end">
                 <input type="submit" value="Search" class="btn btn-primary" />
                 <a asp-controller="Notes" asp-action="Index" class="btn btn-primary">Reset Search</a>
             </div>
@@ -52,81 +52,79 @@
 <div class="spacer">
 
 </div>
-@*<form asp-action="ReIndex">
-    <div class="form-group">
-        <input type="submit" value="ReIndex" class="btn btn-danger" />
-    </div>
-</form>*@
-<table id="table"
-       data-toggle="table"
-       data-height="700"
-       data-pagination="true"
-       class="table">
-    <thead>
-        <tr>
-            <th data-field="Name" data-sortable="true">
-                Name
-            </th>
-            <th data-field="HasCode" data-sortable="true">
-                Has Code
-            </th>
-            <th data-field="CodeLanguage" data-sortable="true">
-                Language
-            </th>
-            <th data-field="Created" data-sortable="true">
-                Created At
-            </th>
-            <th data-field="LastModified" data-sortable="true">
-                Last Modified
-            </th>
-        </tr>
-    </thead>
-    <tbody>
-        @for (int i = 0; i < Model.Count(); i++)
-        {
-            <tr id="tr-id-@i" class="tr-class-@i" data-title="bootstrap table" data-object='{"key": "value"}'>
-                <td id="td-id-@i" class="td-class-@i" data-title="bootstrap table">
-                    <a asp-action="Edit" asp-route-id="@Model[i].Id">@Html.DisplayFor(modelItem => Model[i].Name)</a>
-                </td>
-                <td>
-                    @if (Model[i].HasCode)
-                    {
-                        <p>Yes</p>
-                    }
-                    else
-                    {
-                        <p>No</p>
-                    }
-
-                </td>
-                <td>
-                    @if (Model[i].HasCode)
-                    {
-                        @Html.DisplayFor(modelItem => Model[i].CodeLanguage)
-                    }
-                    else
-                    {
-                        <p>N/A</p>
-                    }
-
-                </td>
-                <td>
-                    @if (Model[i].Created == new DateTime())
-                    {
-                        <p>N/A</p>
-                    }
-                    else
-                    {
-                        @String.Format("{0:dddd, MMMM d, yyyy}", Model[i].Created)
-                    }
-                </td>
-                <td>
-                    @String.Format("{0:dddd, MMMM d, yyyy}", Model[i].LastModified)
-                </td>
+<div class="mt-3">
+    <table id="table"
+           data-toggle="table"
+           data-height="700"
+           data-pagination="true"
+           class="table">
+        <thead>
+            <tr>
+                <th data-field="Name" data-sortable="true">
+                    Name
+                </th>
+                <th data-field="HasCode" data-sortable="true">
+                    Has Code
+                </th>
+                <th data-field="CodeLanguage" data-sortable="true">
+                    Language
+                </th>
+                <th data-field="Created" data-sortable="true">
+                    Created At
+                </th>
+                <th data-field="LastModified" data-sortable="true">
+                    Last Modified
+                </th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < Model.Count(); i++)
+            {
+                <tr id="tr-id-@i" class="tr-class-@i" data-title="bootstrap table" data-object='{"key": "value"}'>
+                    <td id="td-id-@i" class="td-class-@i" data-title="bootstrap table">
+                        <a asp-action="Edit" asp-route-id="@Model[i].Id">@Html.DisplayFor(modelItem => Model[i].Name)</a>
+                    </td>
+                    <td>
+                        @if (Model[i].HasCode)
+                        {
+                            <p>Yes</p>
+                        }
+                        else
+                        {
+                            <p>No</p>
+                        }
+    
+                    </td>
+                    <td>
+                        @if (Model[i].HasCode)
+                        {
+                            @Html.DisplayFor(modelItem => Model[i].CodeLanguage)
+                        }
+                        else
+                        {
+                            <p>N/A</p>
+                        }
+    
+                    </td>
+                    <td>
+                        @if (Model[i].Created == new DateTime())
+                        {
+                            <p>N/A</p>
+                        }
+                        else
+                        {
+                            @String.Format("{0:dddd, MMMM d, yyyy}", Model[i].Created)
+                        }
+                    </td>
+                    <td>
+                        @String.Format("{0:dddd, MMMM d, yyyy}", Model[i].LastModified)
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
 @section Scripts{
 
     <script src="https://unpkg.com/jquery-resizable-columns@0.2.3/dist/jquery.resizableColumns.min.js"></script>
