@@ -30,7 +30,7 @@ namespace Snips.Controllers
             var snipsQueryItems = await _context.Blogs
                 .Where(x => x.Deleted == false 
                             && x.Draft == false)
-                                .OrderByDescending(x => x.LastModified)
+                                .OrderByDescending(x => x.Created)
                 .Select(x => new
                     BlogDTO
                     {

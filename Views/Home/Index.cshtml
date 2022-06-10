@@ -8,18 +8,27 @@
             @foreach (var note in Model)
             {
                 <div class="card mt-5">
-                     <div class="card-header">
-                         <h3><a asp-controller="Blogs" asp-action="DetailsBySlug" asp-route-slug="@note.Slug">@note.Name</a></h3>
-                      </div>
+                    <div class="card-header">
+                        <h3>
+                            <a asp-controller="Blogs" asp-action="DetailsBySlug" asp-route-slug="@note.Slug">@note.Name</a>
+                        </h3>
+                    </div>
                     <div class="card-body">
                         <p class="card-text">@Html.Raw(note.Content)</p>
                         @if (User.IsInRole("Admin"))
                         {
-                            <a asp-controller="Blogs" asp-action="DetailsById" asp-route-id="@note.Id" 
-                               class="btn btn-primary float-end ms-2">Edit</a>
+                            <a asp-controller="Blogs" asp-action="DetailsById" asp-route-id="@note.Id"
+                               class="btn btn-primary float-end ms-2">
+                                Edit
+                            </a>
                         }
-                        <a asp-controller="Blogs" asp-action="DetailsById" asp-route-id="@note.Id" 
-                           class="btn btn-primary float-end ms-2">View</a>
+                        <a asp-controller="Blogs" asp-action="DetailsBySlug" asp-route-slug="@note.Slug"
+                           class="btn btn-primary float-end ms-2">
+                            View
+                        </a>
+                    </div>
+                    <div class="card-footer text-muted text-center">
+                        Published on @note.Created.ToString("MM/dd/yyyy")
                     </div>
                 </div>
                 <div class="row">
@@ -30,10 +39,11 @@
         <div class="col-2">
             <h5>Recent Blog Posts</h5>
             <hr/>
-            @foreach (var note in Model.OrderBy(x => x.Created))
+            @foreach (var note in Model)
             {
-                <h6><a asp-controller="Blogs" asp-action="DetailsById" asp-route-id="@note.Id" >@note.Name</a></h6>
-
+                <h6>
+                    <a asp-controller="Blogs" asp-action="DetailsBySlug" asp-route-slug="@note.Slug">@note.Name</a>
+                </h6>
             }
         </div>
 

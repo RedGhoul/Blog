@@ -3,10 +3,19 @@
 @inject UserManager<Snips.Data.ApplicationUser> UserManager
 
 <ul class="navbar-nav">
+        <li class="nav-item">
+            <a class="nav-link text-dark" target="_blank" href="https://www.linkedin.com/in/avaneesa/">Linkedin</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-dark" target="_blank" href="https://github.com/redghoul">Github</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-dark" target="_blank" href="https://www.avaneesa.com/">Portfolio</a>
+        </li>
     @if (SignInManager.IsSignedIn(User))
     {
         <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="" asp-controller="Blogs" asp-action="Index">Blog</a>
+            <a class="nav-link text-dark" asp-area="" asp-controller="Blogs" asp-action="Index">Blogs</a>
         </li>
         <li class="nav-item">
             <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @User.Identity.Name!</a>
@@ -17,13 +26,5 @@
             </form>
         </li>
     }
-    else
-    {
-        <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Register">Register</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Login">Login</a>
-        </li>
-    }
+
 </ul>
