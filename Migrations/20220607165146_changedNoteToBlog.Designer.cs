@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Snips.Data;
 
@@ -11,9 +12,10 @@ using Snips.Data;
 namespace Blog.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220607165146_changedNoteToBlog")]
+    partial class changedNoteToBlog
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -246,8 +248,9 @@ namespace Blog.Migrations
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");
 
-                    b.Property<bool>("Deleted")
-                        .HasColumnType("bit");
+                    b.Property<string>("Deleted")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("Draft")
                         .HasColumnType("bit");
@@ -257,9 +260,6 @@ namespace Blog.Migrations
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(280)");
-
-                    b.Property<string>("Slug")
-                        .HasColumnType("nvarchar(255)");
 
                     b.HasKey("Id");
 

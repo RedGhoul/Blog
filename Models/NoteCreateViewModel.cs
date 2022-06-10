@@ -9,7 +9,7 @@ namespace Snips.Models
 {
     public class NoteCreateViewModel
     {
-        public Note Note { get; set; }
+        public Data.Blog Blog { get; set; }
         public SelectList CodingLanguages { get; set; }
     }
 }

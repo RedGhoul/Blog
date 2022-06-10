@@ -17,7 +17,7 @@ namespace Snips.Data
         public string FirstName { get; set; }
         [Column(TypeName = "nvarchar(280)")]
         public string LastName { get; set; }
-        public ICollection<Note> Notes { get; set; }
+        public ICollection<Blog> Blogs { get; set; }
         public DateTime DateCreated { get; set; }
     }
 }

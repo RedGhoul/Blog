@@ -27,16 +27,16 @@ namespace Snips.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var snipsQueryItems = await _context.Notes
+            var snipsQueryItems = await _context.Blogs
                 .Where(x => x.Deleted == false 
-                            && x.Draft == false 
-                            && x.ApplicationUserId.Equals(GetCurrentUserId()))
-                .OrderByDescending(x => x.LastModified)
+                            && x.Draft == false)
+                                .OrderByDescending(x => x.LastModified)
                 .Select(x => new
-                    NoteDTO
+                    BlogDTO
                     {
                         Id = x.Id,
                         Name = x.Name,
+                        Slug = x.Slug,
                         Content = x.Content,
                         Created = x.Created,
                         LastModified = x.LastModified.GetValueOrDefault(DateTime.UtcNow)
@@ -52,7 +52,7 @@ namespace Snips.Controllers
         
         private bool NoteExists(int id)
         {
-            return _context.Notes.Any(e => e.Id == id);
+            return _context.Blogs.Any(e => e.Id == id);
         }
 
         private string GetCurrentUserId()

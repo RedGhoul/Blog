@@ -1,4 +1,4 @@
-﻿@model NoteEditViewModel
+﻿@model BlogEditViewModel
 
 @{
     ViewData["Title"] = "Edit";
@@ -19,14 +19,14 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Are you sure you want to delete this note ?</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Are you sure you want to delete this blog ?</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" data-dismiss="modal">No</button>
-                    <form asp-action="Delete" method="post" asp-route-id="@Model.Note.Id">
+                    <form asp-action="Delete" method="post" asp-route-id="@Model.Blog.Id">
                         <button class="btn btn-danger" type="submit" value="Submit">Yes</button>
                     </form>
                 </div>
@@ -38,22 +38,30 @@
 <div class="row">
     <div class="col-md-12">
         <form>
-            <input type="hidden" asp-for="@Model.Note.Id"/>
+            <input type="hidden" asp-for="@Model.Blog.Id"/>
             <div class="form-group mt-3">
-                <label asp-for="@Model.Note.Name" class="control-label mt-3"></label>
-                <input asp-for="@Model.Note.Name" class="form-control"/>
+                <label asp-for="@Model.Blog.Slug" class="control-label mt-3"></label>
+                <input asp-for="@Model.Blog.Slug" class="form-control" readonly/>
+            </div>
+            <div class="form-group mt-3">
+                <label asp-for="@Model.Blog.Name" class="control-label mt-3"></label>
+                <input asp-for="@Model.Blog.Name" class="form-control"/>
+            </div>
+            <div class="form-group mt-3">
+                <label asp-for="@Model.Blog.Created" class="control-label mt-3"></label>
+                <input asp-for="@Model.Blog.Created" class="form-control"/>
             </div>
             <div class="form-check mt-3 float-end">
-                <input class="form-check-input" type="checkbox" asp-for="@Model.Note.Draft">
-                <label class="form-check-label" asp-for="@Model.Note.Draft">
+                <input class="form-check-input" type="checkbox" asp-for="@Model.Blog.Draft">
+                <label class="form-check-label" asp-for="@Model.Blog.Draft">
                     Draft
                 </label>
             </div>
             <div class="form-group mt-3" id="note-content">
-                <label asp-for="@Model.Note.Content" class="control-label mt-3"></label>
-                <input asp-for="@Model.Note.Content" class="form-control" hidden/>
+                <label asp-for="@Model.Blog.Content" class="control-label mt-3"></label>
+                <input asp-for="@Model.Blog.Content" class="form-control" hidden/>
                 <div id="editorContent" style="height: 300px;">
-                    @Html.Raw(@Model.Note.Content)
+                    @Html.Raw(@Model.Blog.Content)
                 </div>
             </div>
 
@@ -67,31 +75,19 @@
       
         window.addEventListener('load', (event) => {
             
-            var curNoteId = $("#Note_Id").val();
-            var noteContent = $("#note-content")
-
-            @if (string.IsNullOrWhiteSpace(@Model.Note.Content))
-            {
-                @Html.Raw("noteContent.hide();")
-            }
-
+            var curBlogId = $("#Blog_Id").val();
             
-            $("#ViewNote").click(function () {
-                noteContent.show();
-                $("#ViewNote").hide();
-            });
-
-            $("#Note_Draft").click(function () {
-                if (curTimeOutNoteName !== null) {
-                    clearTimeout(curTimeOutNoteName);
+            $("#Blog_Created").keyup(function () {
+                if (curTimeOutBlogName !== null) {
+                    clearTimeout(curTimeOutBlogName);
                 }
-                curTimeOutNoteName = setTimeout(function () {
+                curTimeOutBlogName = setTimeout(function () {
                     $.ajax({
-                        url: "/api/Notes/NoteDraft/" + curNoteId,
+                        url: "/api/Blogs/BlogCreated/" + curBlogId,
                         dataType: 'text',
                         type: 'post',
                         contentType: 'application/json',
-                        data: JSON.stringify({ "noteDraft": document.getElementById('Note_Draft').checked }),
+                        data: JSON.stringify({ "date": document.getElementById('Blog_Created').value }),
                         success: function (data, textStatus, jQxhr) {
                         },
                         error: function (jqXhr, textStatus, errorThrown) {
@@ -101,18 +97,38 @@
                 }, 500);
             });
             
-            var curTimeOutNoteName = null;
-            $("#Note_Name").keyup(function () {
-                if (curTimeOutNoteName !== null) {
-                    clearTimeout(curTimeOutNoteName);
+            $("#Blog_Draft").click(function () {
+                if (curTimeOutBlogName !== null) {
+                    clearTimeout(curTimeOutBlogName);
                 }
-                curTimeOutNoteName = setTimeout(function () {
+                curTimeOutBlogName = setTimeout(function () {
                     $.ajax({
-                        url: "/api/Notes/NoteName/" + curNoteId,
+                        url: "/api/Blogs/BlogDraft/" + curBlogId,
                         dataType: 'text',
                         type: 'post',
                         contentType: 'application/json',
-                        data: JSON.stringify({ "noteName": $("#Note_Name").val() }),
+                        data: JSON.stringify({ "draft": document.getElementById('Blog_Draft').checked }),
+                        success: function (data, textStatus, jQxhr) {
+                        },
+                        error: function (jqXhr, textStatus, errorThrown) {
+                            alertify.message("Could not save change", 1000);
+                        }
+                    });
+                }, 500);
+            });
+            
+            var curTimeOutBlogName = null;
+            $("#Blog_Name").keyup(function () {
+                if (curTimeOutBlogName !== null) {
+                    clearTimeout(curTimeOutBlogName);
+                }
+                curTimeOutBlogName = setTimeout(function () {
+                    $.ajax({
+                        url: "/api/Blogs/BlogName/" + curBlogId,
+                        dataType: 'text',
+                        type: 'post',
+                        contentType: 'application/json',
+                        data: JSON.stringify({ "name": $("#Blog_Name").val() }),
                         success: function (data, textStatus, jQxhr) {
                         },
                         error: function (jqXhr, textStatus, errorThrown) {
@@ -146,19 +162,19 @@
                 },
             });
 
-            var curTimeOutNoteContent = null;
+            var curTimeOutBlogContent = null;
             quillDocs.on('text-change', function (delta) {
-                $("#Note_Content").val(quillDocs.root.innerHTML);
-                if (curTimeOutNoteContent !== null) {
-                    clearTimeout(curTimeOutNoteContent);
+                $("#Blog_Content").val(quillDocs.root.innerHTML);
+                if (curTimeOutBlogContent !== null) {
+                    clearTimeout(curTimeOutBlogContent);
                 }
-                curTimeOutNoteContent = setTimeout(function () {
+                curTimeOutBlogContent = setTimeout(function () {
                     $.ajax({
-                        url: "/api/Notes/NoteContent/" + curNoteId,
+                        url: "/api/Blogs/BlogContent/" + curBlogId,
                         dataType: 'text',
                         type: 'post',
                         contentType: 'application/json',
-                        data: JSON.stringify({ "noteContent": $("#Note_Content").val() }),
+                        data: JSON.stringify({ "content": $("#Blog_Content").val() }),
                         success: function (data, textStatus, jQxhr) {
                         },
                         error: function (jqXhr, textStatus, errorThrown) {

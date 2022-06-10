@@ -7,9 +7,8 @@ using System.Threading.Tasks;
 
 namespace Snips.Models
 {
-    public class NoteEditViewModel
+    public class BlogEditViewModel
     {
-        public Note Note { get; set; }
-        public SelectList CodingLanguages { get; set; }
+        public Data.Blog Blog { get; set; }
     }
 }

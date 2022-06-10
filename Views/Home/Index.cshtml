@@ -1,23 +1,41 @@
-﻿@model List<Snips.Models.NoteDTO>
+﻿@model List<Snips.Models.BlogDTO>
 @{
     ViewData["Title"] = "Home Page";
 }
+<div class="container">
+    <div class="row">
+        <div class="col-10">
+            @foreach (var note in Model)
+            {
+                <div class="card mt-5">
+                     <div class="card-header">
+                         <h3><a asp-controller="Blogs" asp-action="DetailsBySlug" asp-route-slug="@note.Slug">@note.Name</a></h3>
+                      </div>
+                    <div class="card-body">
+                        <p class="card-text">@Html.Raw(note.Content)</p>
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <a asp-controller="Blogs" asp-action="DetailsById" asp-route-id="@note.Id" 
+                               class="btn btn-primary float-end ms-2">Edit</a>
+                        }
+                        <a asp-controller="Blogs" asp-action="DetailsById" asp-route-id="@note.Id" 
+                           class="btn btn-primary float-end ms-2">View</a>
+                    </div>
+                </div>
+                <div class="row">
+                </div>
+            }
 
-<div class="row">
-    @foreach (var note in Model)
-    {
-        <div class="card" style="width: 18rem;">
-            <img src="..." class="card-img-top" alt="...">
-            <div class="card-body">
-                <h5 class="card-title">@note.Name</h5>
-                <p class="card-text">
-                    @if (note.Content != null)
-                    {
-                        @note.Content.Substring(0, 20)
-                    }
-                </p>
-                <a href="#" class="btn btn-primary">View</a>
-            </div>
         </div>
-    }
+        <div class="col-2">
+            <h5>Recent Blog Posts</h5>
+            <hr/>
+            @foreach (var note in Model.OrderBy(x => x.Created))
+            {
+                <h6><a asp-controller="Blogs" asp-action="DetailsById" asp-route-id="@note.Id" >@note.Name</a></h6>
+
+            }
+        </div>
+
+    </div>
 </div>

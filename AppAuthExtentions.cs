@@ -31,7 +31,7 @@ namespace Snips
 
             //Assign Admin role to the main User here we have given our newly registered 
             //login id for Admin management
-            ApplicationUser user = await UserManager.FindByEmailAsync("avaneesa.basappa@hey.com");
+            ApplicationUser user = await UserManager.FindByEmailAsync("avaneesab5@gmail.com");
             if (user != null)
             {
                 IList<string> currentUserRoles = await UserManager.GetRolesAsync(user);

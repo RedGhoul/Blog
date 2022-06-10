@@ -37,15 +37,10 @@ namespace Snips
                .AddDefaultTokenProviders()
                .AddEntityFrameworkStores<ApplicationDbContext>();
             
-            services.ConfigureApplicationCookie(options =>
-            {
-                options.ExpireTimeSpan = TimeSpan.FromDays(30);
-            });
 
             services.AddCors();
-            services.AddControllersWithViews();
+            services.AddMvc();
             services.AddRazorPages().AddRazorRuntimeCompilation();
-
             services.AddResponseCompression();
             services.AddTransient<UserManager<ApplicationUser>>();
             services.AddTransient<RoleManager<IdentityRole>>();

@@ -8,36 +8,39 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Slugify;
 using Snips.Data;
 using Snips.Models;
 
 namespace Snips.Controllers
 {
-    [Authorize]
-    public class NotesController : Controller
+    [Authorize(Roles = "Admin")]
+    public class BlogsController : Controller
     {
         private readonly ApplicationDbContext _context;
         private UserManager<ApplicationUser> _userManager;
-        private readonly ILogger<NotesController> _logger;
+        private readonly ILogger<BlogsController> _logger;
         
-        public NotesController(ILogger<NotesController> logger, UserManager<ApplicationUser> userManager, ApplicationDbContext context)
+        public BlogsController(ILogger<BlogsController> logger, UserManager<ApplicationUser> userManager, ApplicationDbContext context)
         {
             _logger = logger;
             _context = context;
             _userManager = userManager;
         }
 
-        // GET: Notes
+        // GET: Blogs
         public async Task<IActionResult> Index()
         {
-            var snipsQueryItems = _context.Notes
+            var snipsQueryItems = _context.Blogs
                 .Where(x => x.Deleted == false && x.ApplicationUserId.Equals(GetCurrentUserId()))
                 .OrderByDescending(x => x.LastModified)
                 .Select(x => new
-                    NoteDTO
+                    BlogDTO
                         {
                             Id = x.Id,
                             Name = x.Name,
+                            Draft = x.Draft,
+                            Deleted = x.Deleted,
                             Created = x.Created,
                             LastModified = x.LastModified.GetValueOrDefault(DateTime.UtcNow)
                         }).ToListAsync();
@@ -49,14 +52,13 @@ namespace Snips.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Search(string SearchTerm, DateTime CreatedDate, DateTime LastModifiedDate)
         {
-            IQueryable<Note> snipsQuery = _context.Notes.Where(x => x.ApplicationUserId.Equals(GetCurrentUserId()) && x.Deleted == false);
+            IQueryable<Data.Blog> snipsQuery = _context.Blogs.Where(x => x.ApplicationUserId.Equals(GetCurrentUserId()) && x.Deleted == false);
 
 
             if (!string.IsNullOrEmpty(SearchTerm))
             {
-                var SearchTermEsc = SearchTerm.Trim().Replace(" ", "|");
                 snipsQuery = snipsQuery
-                        .Where(x => EF.Functions.FreeText(x.Content,SearchTerm));
+                        .Where(x => x.Content.Contains(SearchTerm) || x.Name.Contains(SearchTerm));
             }
 
 
@@ -70,7 +72,7 @@ namespace Snips.Controllers
             {
                 snipsQuery = snipsQuery.Where(x => x.Created.Date == CreatedDate.ToUniversalTime().Date);
             }
-            var snipsQueryItems = snipsQuery.OrderByDescending(x => x.LastModified).Select(x => new NoteDTO
+            var snipsQueryItems = snipsQuery.OrderByDescending(x => x.LastModified).Select(x => new BlogDTO
             {
                 Id = x.Id,
                 Name = x.Name,
@@ -84,10 +86,10 @@ namespace Snips.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Error searching the DB for Notes with SearchTerms {SearchTerm}");
-                var AllUserSnips = await _context.Notes
+                _logger.LogError(ex, $"Error searching the DB for Blogs with SearchTerms {SearchTerm}");
+                var AllUserSnips = await _context.Blogs
                     .Where(x => x.ApplicationUserId.Equals(GetCurrentUserId()) && x.Deleted == false)
-                    .Select(x => new NoteDTO
+                    .Select(x => new BlogDTO
                 {
                     Id = x.Id,
                     Name = x.Name,
@@ -97,34 +99,19 @@ namespace Snips.Controllers
                 return View("Index", AllUserSnips);
             }
         }
+        
 
-        // GET: Notes
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ReIndex()
+        // GET: Blogs/Details/5
+        [AllowAnonymous]
+        public async Task<IActionResult> DetailsById(int id)
         {
-            IQueryable<Note> snipsQuery = _context.Notes.Where(x => x.ApplicationUserId.Equals(GetCurrentUserId()) && x.Deleted == false);
-
-            var allSnipQueries = await snipsQuery.ToListAsync();
-
-            foreach (var item in allSnipQueries)
-            {
-                item.LastModified = DateTime.UtcNow;
-                _context.Update(item);
-                await _context.SaveChangesAsync();
-            }
-            return RedirectToAction(nameof(Index));
-        }
-
-        // GET: Notes/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
+            if (id == 0)
             {
                 return NotFound();
             }
 
-            var note = await _context.Notes.Where(x => x.Deleted == false && x.ApplicationUserId.Equals(GetCurrentUserId()))
+            var note = await _context.Blogs.Where(
+                    x => x.Deleted == false && x.ApplicationUserId.Equals(GetCurrentUserId()))
                 .Include(x => x.ApplicationUser)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (note == null)
@@ -132,15 +119,36 @@ namespace Snips.Controllers
                 return NotFound();
             }
 
-            return View(note);
+            return View("Details",note);
+        }
+        
+        // GET: Blogs/Details/slug
+        [AllowAnonymous]
+        public async Task<IActionResult> DetailsBySlug(string? slug)
+        {
+            if (slug == null)
+            {
+                return NotFound();
+            }
+
+            var note = await _context.Blogs.Where(
+                    x => x.Deleted == false && x.Draft == false)
+                .Include(x => x.ApplicationUser)
+                .FirstOrDefaultAsync(m => m.Slug == slug);
+            if (note == null)
+            {
+                return NotFound();
+            }
+
+            return View("Details",note);
         }
 
-        // GET: Notes/Create
+        // GET: Blogs/Create
         public IActionResult Create()
         {
             var vm = new NoteCreateViewModel
             {
-                Note = new Note()
+                Blog = new Data.Blog()
                 {
 
                 },
@@ -148,27 +156,27 @@ namespace Snips.Controllers
             return View(vm);
         }
 
-        // POST: Notes/Create
+        // POST: Blogs/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(NoteCreateViewModel vm)
         {
 
-            if (string.IsNullOrWhiteSpace(vm.Note.Name))
+            if (string.IsNullOrWhiteSpace(vm.Blog.Name))
             {
                 return View(vm);
             }
-            vm.Note.ApplicationUserId = GetCurrentUserId();
+            vm.Blog.ApplicationUserId = GetCurrentUserId();
+            vm.Blog.Slug = $"{new SlugHelper().GenerateSlug(vm.Blog.Name)}-{vm.Blog.Id}";
+            vm.Blog.LastModified = DateTime.UtcNow;
+            vm.Blog.Created = DateTime.UtcNow;
 
-            vm.Note.LastModified = DateTime.UtcNow;
-            vm.Note.Created = DateTime.UtcNow;
-
-            _context.Add(vm.Note);
+            _context.Add(vm.Blog);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        // GET: Notes/Edit/5
+        // GET: Blogs/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -176,7 +184,7 @@ namespace Snips.Controllers
                 return NotFound();
             }
 
-            var note = await _context.Notes.Where(x => x.ApplicationUserId.Equals(GetCurrentUserId()))
+            var note = await _context.Blogs.Where(x => x.ApplicationUserId.Equals(GetCurrentUserId()))
                 .SingleOrDefaultAsync(x => x.Id == id);
 
             if (note == null)
@@ -184,20 +192,20 @@ namespace Snips.Controllers
                 return NotFound();
             }
 
-            var vm = new NoteEditViewModel
+            var vm = new BlogEditViewModel
             {
-                Note = note,
+                Blog = note,
             };
 
             return View(vm);
         }
 
-        // POST: Notes/Edit/5
+        // POST: Blogs/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, NoteEditViewModel vm)
+        public async Task<IActionResult> Edit(int id, BlogEditViewModel vm)
         {
-            if (id != vm.Note.Id)
+            if (id != vm.Blog.Id)
             {
                 return NotFound();
             }
@@ -206,16 +214,16 @@ namespace Snips.Controllers
             {
                 try
                 {
-                    vm.Note.ApplicationUserId = GetCurrentUserId();
-                   
-                    vm.Note.LastModified = DateTime.UtcNow;
+                    vm.Blog.ApplicationUserId = GetCurrentUserId();
+                    vm.Blog.Slug = $"{new SlugHelper().GenerateSlug(vm.Blog.Name)}-{vm.Blog.Id}";
+                    vm.Blog.LastModified = DateTime.UtcNow;
 
-                    _context.Update(vm.Note);
+                    _context.Update(vm.Blog);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!NoteExists(vm.Note.Id))
+                    if (!NoteExists(vm.Blog.Id))
                     {
                         return NotFound();
                     }
@@ -229,7 +237,7 @@ namespace Snips.Controllers
             return View(vm);
         }
 
-        // GET: Notes/Delete/5
+        // GET: Blogs/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -237,7 +245,7 @@ namespace Snips.Controllers
                 return NotFound();
             }
 
-            var note = await _context.Notes.Where(x => x.ApplicationUserId.Equals(GetCurrentUserId()))
+            var note = await _context.Blogs.Where(x => x.ApplicationUserId.Equals(GetCurrentUserId()))
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (note == null)
             {
@@ -247,12 +255,12 @@ namespace Snips.Controllers
             return View(note);
         }
 
-        // POST: Notes/Delete/5
+        // POST: Blogs/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var note = await _context.Notes
+            var note = await _context.Blogs
                 .Where(x => x.ApplicationUserId.Equals(GetCurrentUserId()) && x.Id == id)
                 .FirstOrDefaultAsync();
             if (note != null)
@@ -268,7 +276,7 @@ namespace Snips.Controllers
 
         private bool NoteExists(int id)
         {
-            return _context.Notes.Any(e => e.Id == id);
+            return _context.Blogs.Any(e => e.Id == id);
         }
 
         private string GetCurrentUserId()

@@ -5,13 +5,14 @@ using System.Threading.Tasks;
 
 namespace Snips.Models
 {
-    public class NoteDTO
+    public class BlogDTO
     {
         public int Id { get; set; }
         public string Name { get; set; }
         public string Content { get; set; }
-        public bool HasCode { get; set; }
-        public string CodeLanguage { get; set; }
+        public string Slug { get; set; }
+        public bool Draft { get; set; }
+        public bool Deleted { get; set; }
         public DateTime Created { get; set; }
         public DateTime LastModified { get; set; }
     }

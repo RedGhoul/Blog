@@ -15,22 +15,22 @@ namespace Snips.Data
         {
         }
 
-        public DbSet<Note> Notes { get; set; }
+        public DbSet<Blog> Blogs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
             
 
-            builder.Entity<Note>()
+            builder.Entity<Blog>()
             .HasOne<ApplicationUser>(note => note.ApplicationUser)
-            .WithMany(appuser => appuser.Notes)
+            .WithMany(appuser => appuser.Blogs)
             .HasForeignKey(note => note.ApplicationUserId)
             .OnDelete(DeleteBehavior.NoAction);
 
 
-            builder.Entity<Note>().HasIndex(n => n.LastModified);
-            builder.Entity<Note>().HasIndex(n => n.Created);
+            builder.Entity<Blog>().HasIndex(n => n.LastModified);
+            builder.Entity<Blog>().HasIndex(n => n.Created);
         }
     }
 }
