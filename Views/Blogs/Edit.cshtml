@@ -3,6 +3,7 @@
 @{
     ViewData["Title"] = "Edit";
 }
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/github.min.css" integrity="sha512-0aPQyyeZrWj9sCA46UlmWgKOP0mUipLQ6OZXu8l4IcAmD2u31EPEy9VcIMvl7SoAaKe8bLXZhYoMaE/in+gcgA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <style>
     .control-label {
         font-size: xx-large;
@@ -74,7 +75,6 @@
     <script>
       
         window.addEventListener('load', (event) => {
-            
             var curBlogId = $("#Blog_Id").val();
             
             $("#Blog_Created").keyup(function () {
@@ -152,13 +152,17 @@
                 [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
                 [{ 'font': [] }],
                 [{ 'align': [] }],
-                ['clean']                                         // remove formatting button
+                ['clean']                                  ,       // remove formatting button
+                ['code-block']
             ];
-
+            hljs.configure({   // optionally configure hljs
+              languages: ['javascript', 'java']
+            });
             var quillDocs = new Quill('#editorContent', {
                 theme: 'snow',
                 modules: {
-                    toolbar: toolbarOptions
+                    toolbar: toolbarOptions,
+                    syntax: true, 
                 },
             });
 

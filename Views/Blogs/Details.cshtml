@@ -1,7 +1,8 @@
 ﻿@model Snips.Data.Blog
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["SEO_Info_Title"] = Model.Name;
+    ViewData["SEO_Info_Description"] = Model.Content;
 }
 
 <h1>

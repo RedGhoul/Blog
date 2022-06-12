@@ -2,6 +2,8 @@
 @{
     ViewData["Title"] = "Home Page";
 }
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/styles/github.min.css" integrity="sha512-0aPQyyeZrWj9sCA46UlmWgKOP0mUipLQ6OZXu8l4IcAmD2u31EPEy9VcIMvl7SoAaKe8bLXZhYoMaE/in+gcgA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
 <div class="container">
     <div class="row">
         <div class="col-10">
@@ -49,3 +51,10 @@
 
     </div>
 </div>
+@section Scripts {
+    <script>
+    hljs.configure({   // optionally configure hljs
+      languages: ['javascript', 'java']
+    });
+    </script>
+}
